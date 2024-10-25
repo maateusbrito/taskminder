@@ -1,0 +1,158 @@
+{
+  "type": "Compass Connections",
+  "version": {
+    "$numberInt": "1"
+  },
+  "connections": [
+    {
+      "id": "16edbf36-72c4-41c7-99f6-62a90aa7fbb2",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1725895259860"
+        }
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      }
+    },
+    {
+      "id": "4cc09901-4625-4cf0-85b0-9bda16243994",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1725780146559"
+        }
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      }
+    },
+    {
+      "id": "4ee06fcf-4915-439e-af43-6575eda77988",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1724993481087"
+        }
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      }
+    },
+    {
+      "id": "5cf1fe40-3c7f-418b-b087-94417613b104",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1724809278679"
+        }
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      }
+    },
+    {
+      "id": "7d890606-46f7-4246-a07d-29b4999d992b",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1721688669343"
+        }
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/taskminder",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      }
+    },
+    {
+      "id": "7f1e12b2-8a46-43a8-b113-a09c49963626",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1721701071764"
+        }
+      },
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      },
+      "savedConnectionType": "recent"
+    },
+    {
+      "id": "8f08f7b1-8f7d-4c28-8164-823716009418",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1722307028789"
+        }
+      },
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      },
+      "savedConnectionType": "recent"
+    },
+    {
+      "id": "9c351db0-20f4-438a-b95c-d915b6622568",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1722481299604"
+        }
+      },
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      },
+      "savedConnectionType": "recent"
+    },
+    {
+      "id": "af8f08f9-99c6-45be-8f6a-07ace0f754cf",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1721878694348"
+        }
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      }
+    },
+    {
+      "id": "c9f07065-ba0a-442d-85b2-7750ee55438c",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1729866486821"
+        }
+      },
+      "savedConnectionType": "recent",
+      "connectionOptions": {
+        "connectionString": "mongodb://localhost:27017/taskminder",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjowLCJzdGF0ZSI6W119"
+        }
+      }
+    }
+  ]
+}
