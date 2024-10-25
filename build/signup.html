@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - TaskMinder</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: url('http://i.mlcdn.com.br/portaldalu/fotosconteudo/17021.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background-color: rgba(255, 255, 255, 0.9); /* Ajuste de transparência */
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 30px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #ff5722;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .header span {
+            display: block;
+            font-size: 16px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .form-row {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: calc(50% - 10px);
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            background-color: #f5f5f5;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .form-group input:focus {
+            border-color: #ff5722;
+            outline: none;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 30px;
+        }
+
+        .password-container .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .password-container .toggle-password img {
+            width: 15px;
+            height: 15px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .button:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .signup-button {
+            background-color: #364ff4; /* Cor vermelha para o botão "Cadastrar" */
+        }
+
+        .login-button {
+            background-color: #4CAF50; /* Cor verde para o botão "Voltar para o Login" */
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: #ff5722;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .confirmation {
+            display: none;
+            text-align: center;
+        }
+
+        .confirmation img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+        }
+
+        .confirmation h2 {
+            color: #4caf50;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .confirmation-button {
+            background-color: #4caf50;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin-top: 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .confirmation-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .form-group {
+                min-width: 100%;
+            }
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="signup-form-container">
+            <div class="header">
+                <h1>TaskMinder</h1>
+                <span>Cadastro</span>
+            </div>
+            <form id="signup-form">
+                <!-- Campos do formulário -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" id="nome" placeholder="Nome" oninput="capitalizeFirstLetter(this)">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="sobrenome" placeholder="Sobrenome" oninput="capitalizeFirstLetter(this)">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="date" placeholder="Data de Nascimento" id="dataNascimento">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="E-mail" id="email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group password-container">
+                        <input type="password" placeholder="Senha" id="senha">
+                        <span class="toggle-password" onclick="togglePassword('senha')">
+                            <img src="https://img.icons8.com/ios-filled/50/000000/visible.png" alt="Mostrar senha" id="toggle-icon-senha">
+                        </span>
+                    </div>
+                    <div class="form-group password-container">
+                        <input type="password" placeholder="Confirmar Senha" id="confirmar-senha">
+                        <span class="toggle-password" onclick="togglePassword('confirmar-senha')">
+                            <img src="https://img.icons8.com/ios-filled/50/000000/visible.png" alt="Mostrar senha" id="toggle-icon-confirmar-senha">
+                        </span>
+                    </div>
+                </div>
+                <button type="submit" class="button signup-button">Cadastrar</button>
+                <button type="button" class="button login-button" onclick="redirectToLogin()">Voltar para o Login</button>
+            </form>
+            <div class="footer">
+                <a href="termos-de-servico.html">Termos de Serviço</a> | 
+                <a href="politica-de-privacidade.html">Política de Privacidade</a>
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+
+        <div id="confirmation-container" class="confirmation">
+            <img src="https://img.icons8.com/ios-filled/80/4caf50/checkmark.png" alt="Confirmação">
+            <h2>Cadastro realizado com sucesso!</h2>
+            <div class="confirmation-button-container">
+                <a href="/index.html" class="button confirmation-button">Voltar para a página inicial</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const nome = document.getElementById('nome').value;
+            const sobrenome = document.getElementById('sobrenome').value;
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmar-senha').value;
+
+            if (!nome || !sobrenome || !dataNascimento || !email || !senha || !confirmarSenha) {
+                displayErrorMessage('Todos os campos são obrigatórios.');
+                return;
+            }
+
+            if (senha !== confirmarSenha) {
+                displayErrorMessage('As senhas não coincidem.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/users/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome, sobrenome, dataNascimento, email, senha })
+                });
+
+                if (response.ok) {
+                    document.getElementById('signup-form-container').style.display = 'none';
+                    document.getElementById('confirmation-container').style.display = 'block';
+                } else {
+                    const errorData = await response.json();
+                    displayErrorMessage(errorData.message || 'Ocorreu um erro ao tentar realizar o cadastro.');
+                }
+            } catch (error) {
+                displayErrorMessage('Ocorreu um erro ao tentar realizar o cadastro.');
+            }
+        });
+
+        function displayErrorMessage(message) {
+            const errorMessageElement = document.getElementById('error-message');
+            errorMessageElement.textContent = message;
+        }
+
+        function redirectToLogin() {
+            window.location.href = '/index.html';
+        }
+
+        function capitalizeFirstLetter(input) {
+            const words = input.value.split(' ');
+            for (let i = 0; i < words.length; i++) {
+                words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
+            }
+            input.value = words.join(' ');
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(`toggle-icon-${inputId}`);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.src = 'https://img.icons8.com/ios-filled/50/000000/hide.png';
+                icon.alt = 'Esconder senha';
+            } else {
+                input.type = 'password';
+                icon.src = 'https://img.icons8.com/ios-filled/50/000000/visible.png';
+                icon.alt = 'Mostrar senha';
+            }
+        }
+    </script>
+</body>
+</html>

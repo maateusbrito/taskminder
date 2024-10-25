@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMinder - Dashboard Financeiro</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: url('http://i.mlcdn.com.br/portaldalu/fotosconteudo/17021.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1140px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            padding-top: 50px;
+            /* Ajuste conforme a altura do título e espaçamento desejado */
+            margin: 0 auto;
+            /* Centraliza horizontalmente */
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin: 0;
+            color: #ff5722;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header span {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-top: 5px;
+            display: block;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            /* Diminuído para menos espaço entre seções */
+        }
+
+        .panels-container {
+            display: flex;
+            gap: 15px;
+            /* Diminuído para menos espaço entre painéis */
+        }
+
+        /* Estilo do painel de adicionar lançamento */
+        .panel {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            /* Ajustado para mais padding */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex: 1;
+        }
+
+        /* Título do painel de resumo financeiro */
+        .panel h3 {
+            font-size: 28px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        /* Estilo do formulário */
+        .panel form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            /* Espaço entre campos */
+        }
+
+        .panel input,
+        .panel select {
+            width: 100%;
+            /* Usa toda a largura disponível */
+            padding: 8px;
+            /* Padding ajustado */
+            font-size: 14px;
+            /* Tamanho da fonte */
+            border: 1px solid #ddd;
+            /* Borda leve */
+            border-radius: 6px;
+            /* Bordas arredondadas */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Sombra leve para destacar */
+            box-sizing: border-box;
+            /* Inclui padding e borda na largura total */
+        }
+
+        .panel input:focus,
+        .panel select:focus {
+            border-color: #27ae60;
+            /* Cor da borda ao focar */
+            outline: none;
+            /* Remove o contorno padrão */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            /* Sombra mais destacada ao focar */
+        }
+
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+            /* Espaço entre colunas */
+        }
+
+        .form-group {
+            flex: 1;
+            /* Preenche o espaço disponível */
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            /* Espaço entre botões */
+        }
+
+        #add-entry-button,
+        #repeat-entry-button {
+            border: none;
+            color: #fff;
+            padding: 10px 16px;
+            /* Padding ajustado */
+            border-radius: 6px;
+            /* Bordas arredondadas */
+            cursor: pointer;
+            font-size: 14px;
+            /* Tamanho da fonte */
+            flex: 1;
+            /* Preenche o espaço disponível */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Sombra leve */
+            transition: background-color 0.3s, box-shadow 0.3s;
+            /* Transição suave para hover */
+        }
+
+        #add-entry-button {
+            background-color: #27ae60;
+            /* Verde */
+        }
+
+        #add-entry-button:hover {
+            background-color: #219150;
+            /* Verde escuro ao passar o mouse */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            /* Sombra mais destacada ao passar o mouse */
+        }
+
+        #repeat-entry-button {
+            background-color: #f39c12;
+            /* Laranja */
+        }
+
+        #repeat-entry-button:hover {
+            background-color: #e67e22;
+            /* Laranja escuro ao passar o mouse */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            /* Sombra mais destacada ao passar o mouse */
+        }
+
+        /* Estilo do painel de adicionar lançamento */
+        .panel-add-entry {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            /* Padding ajustado */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            margin-bottom: 20px;
+            /* Adiciona espaçamento inferior */
+        }
+
+        /* Estilo do painel de lançamentos */
+        .panel-launches {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: 600px;
+            margin-top: 20px;
+        }
+
+
+        /* Estilo do título do painel de lançamentos */
+        .panel-launches h3 {
+            font-size: 26px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+
+        /* Certifique-se de que o contêiner do painel também tenha um comportamento de layout apropriado */
+        .panels-container-2 {
+            display: flex;
+            gap: 15px;
+            /* Espaço entre os painéis */
+            flex-wrap: wrap;
+            /* Permite que os painéis se movam para a linha seguinte se necessário */
+        }
+
+        /* Estilo do painel de lançamentos */
+        .panel-launches {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            max-height: 600px;
+            margin-bottom: 20px;
+            /* Espaçamento inferior */
+            flex: 1;
+            /* Permite que o painel de lançamentos ocupe o espaço disponível */
+        }
+
+        /* Estilo do título do painel de lançamentos */
+        .panel-launches h3 {
+            font-size: 26px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            /* Espaçamento inferior */
+            text-align: center;
+            /* Centralizar o título */
+            font-weight: 700;
+        }
+
+        /* Estilo da lista de lançamentos */
+        .launches-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Estilo de cada item da lista de lançamentos */
+        .launches-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Estilo de cada item da lista de lançamentos */
+        .launches-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        /* Estilo dos botões de ação dentro de cada item da lista */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        /* Estilo das informações dentro de cada item */
+        .launch-info {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            /* Linha de separação */
+            padding-bottom: 10px;
+        }
+
+        .launch-info span {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        /* Estilo do valor e parcela */
+        .launch-info .value-parcel {
+            text-align: right;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .action-buttons .edit-button {
+            background-color: #007bff;
+        }
+
+        .action-buttons .edit-button:hover {
+            background-color: #0056b3;
+        }
+
+
+        .action-buttons .delete-button {
+            background-color: #dc3545;
+        }
+
+        .action-buttons .delete-button:hover {
+            background-color: #c82333;
+        }
+
+
+        /* Estilo do botão de ação dentro de cada item da lista */
+        .launches-list .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-buttons button {
+            background-color: #3498db;
+            /* Azul */
+            border: none;
+            color: #fff;
+            padding: 10px 16px;
+            /* Botões maiores */
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            /* Tamanho da fonte aumentado */
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+
+        .launches-list .action-buttons button:hover {
+            background-color: #0056b3;
+            /* Cor de fundo dos botões no hover */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            /* Sombra mais pronunciada no hover */
+        }
+
+        .launches-list .action-buttons button:active {
+            background-color: #004494;
+            /* Cor de fundo dos botões quando pressionado */
+        }
+
+        /* Estilo para garantir que os botões se ajustem corretamente */
+        .launches-list li {
+            position: relative;
+        }
+
+        /* Estilo ao passar o mouse sobre o item */
+        .launches-list li:hover {
+            background-color: #eaf2f8;
+            transform: translateY(-2px);
+        }
+
+        /* Estilo das informações dentro de cada item */
+        .launches-list .info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .launches-list .description {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .description-date {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex: 1;
+        }
+
+        .description-date .description {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .description-date .date {
+            color: #7f8c8d;
+        }
+
+        .launches-list .value {
+            font-size: 14px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .expense-value {
+            color: #e53935;
+            /* Vermelho para despesas */
+        }
+
+        .income-value {
+            color: #4caf50;
+            /* Verde para receitas */
+        }
+
+        .investment-value {
+            color: #f39c12;
+            /* Dourado para investimentos */
+        }
+
+
+        /* Estilo para os itens de lançamento */
+        .launch-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* Cores de fundo para os diferentes tipos de lançamentos */
+        .income-bg {
+            background-color: #dff0d8;
+            /* Verde claro para receitas */
+        }
+
+        .expense-bg {
+            background-color: #f2dede;
+            /* Vermelho claro para despesas */
+        }
+
+        .investment-bg {
+            background-color: #fff9e5;
+            /* Dourado claro para investimentos */
+        }
+
+        /* Cores dos valores para os diferentes tipos de lançamentos */
+        .income-value {
+            color: #4caf50;
+            /* Verde para receitas */
+        }
+
+        .expense-value {
+            color: #e53935;
+            /* Vermelho para despesas */
+        }
+
+        .investment-value {
+            color: #f39c12;
+            /* Dourado para investimentos */
+        }
+
+        .action-buttons button {
+            margin-left: 5px;
+        }
+
+        .value-parcel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex: 1;
+            text-align: right;
+        }
+
+        .value-parcel .value {
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .value-parcel .parcel {
+            color: #7f8c8d;
+        }
+
+        .launches-list .date {
+            font-size: 14px;
+            color: #7f8c8d;
+            /* Cor cinza suave */
+        }
+
+        .launches-list .type {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+
+        /* Estilo dos botões de ação nos lançamentos */
+        .launches-list button {
+            background-color: #3498db;
+            /* Azul mais vibrante */
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            /* Ajustado para mais conforto */
+            border-radius: 4px;
+            /* Bordas arredondadas */
+            cursor: pointer;
+            font-size: 12px;
+            /* Ajustado para legibilidade */
+            margin-left: 8px;
+            /* Espaçamento entre botões */
+            transition: background-color 0.3s, transform 0.3s;
+            /* Transições suaves */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .launches-list button:hover {
+            background-color: #2980b9;
+            /* Azul escuro ao passar o mouse */
+            transform: scale(1.05);
+            /* Efeito de aumento ao passar o mouse */
+        }
+
+        /* Estilo da barra de rolagem para o painel de lançamentos */
+        .panel-launches::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .panel-launches::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+
+        .panel-launches::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 8px;
+        }
+
+        .panel-launches::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Estilo do painel de desempenho mensal */
+        .panel-performance {
+            background-color: #ffffff;
+            /* Fundo branco para contraste */
+            border-radius: 8px;
+            /* Bordas arredondadas */
+            padding: 20px;
+            /* Espaçamento interno */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Sombra sutil */
+            margin: 20px 0;
+            /* Margem vertical */
+            min-height: 200px;
+            /* Altura mínima para garantir que o painel tenha um tamanho apropriado */
+            width: 100%;
+            /* Garante que o painel ocupe a largura total disponível */
+            max-width: 100%;
+            /* Garante que o painel não ultrapasse a largura disponível */
+            box-sizing: border-box;
+            /* Inclui padding e borda na largura total */
+            overflow: hidden;
+            /* Garante que o conteúdo não ultrapasse os limites do painel */
+        }
+
+
+        .panel button {
+            padding: 8px;
+            /* Diminuído para menos padding */
+            font-size: 12px;
+            /* Diminuído para um tamanho de fonte menor */
+            color: #fff;
+            background-color: #27ae60;
+            border: none;
+            border-radius: 6px;
+            /* Diminuído para bordas mais finas */
+            cursor: pointer;
+            width: 80%;
+            margin-top: 6px;
+            /* Diminuído para menos margem */
+        }
+
+        .panel button:hover {
+            background-color: #219150;
+        }
+
+        /* Estilo do contêiner de resumo financeiro */
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            /* Adapta o número de colunas */
+            gap: 20px;
+            /* Espaçamento entre os cartões */
+            padding: 15px;
+            /* Padding adicional */
+        }
+
+        /* Estilo de cada cartão dentro do resumo financeiro */
+        .summary>div {
+            background-color: #fff;
+            border-radius: 8px;
+            /* Bordas arredondadas */
+            padding: 20px;
+            /* Padding interno */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            /* Transições suaves */
+        }
+
+        /* Estilo dos títulos dentro dos cartões */
+        .summary>div h4 {
+            margin: 0;
+            font-size: 20px;
+            /* Tamanho do título */
+            margin-bottom: 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .summary>div:hover {
+            transform: translateY(-5px);
+            /* Efeito de elevação ao passar o mouse */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            /* Sombra mais pronunciada ao passar o mouse */
+        }
+
+        .summary div h4 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+            /* Ajustado para um tamanho de fonte maior */
+            margin-bottom: 10px;
+            /* Ajustado para mais espaço inferior */
+        }
+
+        /* Estilo dos valores dentro dos cartões */
+        .summary>div p {
+            margin: 0;
+            font-size: 24px;
+            /* Tamanho do valor */
+            font-weight: bold;
+        }
+
+
+        #chart {
+            width: 100% !important;
+            /* Ajusta a largura do gráfico */
+            height: 100% !important;
+            /* Ajusta a altura do gráfico */
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            /* Altura ajustável do gráfico */
+            border: 1px solid #e0e0e0;
+            /* Borda leve ao redor do gráfico */
+            border-radius: 8px;
+            /* Bordas arredondadas para o gráfico */
+            background-color: #fafafa;
+            /* Fundo leve para o gráfico */
+            padding: 20px;
+            /* Espaçamento interno do gráfico */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Sombra sutil */
+        }
+
+        .chart-container .chart-legend {
+            font-size: 12px;
+            /* Ajustado para melhor visibilidade */
+            padding: 6px;
+            /* Ajustado para mais padding */
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .launches-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .launches-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: px;
+            /* Diminuído para menos padding */
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Estilo da descrição e valor dentro de cada item */
+        .launches-list .description {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .launches-list .details {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .launches-list .details span {
+            display: block;
+        }
+
+        .launches-list .type {
+            font-weight: normal;
+            color: #888;
+        }
+
+        .launches li {
+            padding: 12px;
+            /* Diminuído para menos padding */
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            /* Diminuído para um tamanho de fonte menor */
+            color: #34495e;
+        }
+
+        .launches li .description {
+            font-weight: bold;
+        }
+
+        .launches h3 {
+            margin-top: 0;
+            font-size: 18px;
+            /* Diminuído para um tamanho de fonte menor */
+            color: #2c3e50;
+        }
+
+        .launches ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .launches button {
+            background-color: #3498db;
+            border: none;
+            color: #fff;
+            padding: 4px 8px;
+            /* Diminuído para menos padding */
+            border-radius: 4px;
+            /* Diminuído para bordas mais finas */
+            cursor: pointer;
+            font-size: 10px;
+            /* Diminuído para um tamanho de fonte menor */
+            margin-left: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .launches button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Estilo para o Popup de Edição */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 500px;
+            max-width: 90%;
+        }
+
+        .popup-content h3 {
+            margin-top: 0;
+            font-size: 22px;
+            /* Aumentado para mais destaque */
+            color: #2c3e50;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Cores de fundo para lançamentos */
+        .expense-bg {
+            background-color: #fbe9e7;
+        }
+
+        .investment-bg {
+            background-color: #e8f5e9;
+        }
+
+        .income-bg {
+            background-color: #e3f2fd;
+        }
+
+        .expense-value {
+            color: #e53935;
+        }
+
+        .investment-value {
+            color: #43a047;
+        }
+
+        .income-value {
+            color: #1e88e5;
+        }
+
+        /* Gráfico */
+        .chart-container {
+            width: 100%;
+            height: 300px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .popup-content input,
+        .popup-content select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            /* Aumentado para mais conforto */
+            font-size: 16px;
+            /* Ajustado para melhor legibilidade */
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            /* Bordas arredondadas */
+            margin-bottom: 12px;
+            /* Espaço inferior para separação */
+        }
+
+
+
+        /* Estilo dos botões no popup */
+        .popup-content button {
+            padding: 12px 20px;
+            /* Aumentado para mais conforto */
+            font-size: 16px;
+            /* Ajustado para melhor legibilidade */
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            /* Bordas arredondadas */
+            cursor: pointer;
+            margin-right: 10px;
+            /* Espaço entre botões */
+            transition: background-color 0.3s, transform 0.3s;
+            /* Transições suaves */
+        }
+
+        .popup-content button:hover {
+            transform: scale(1.05);
+            /* Efeito de aumento ao passar o mouse */
+        }
+
+        #save-edit-button {
+            background-color: #27ae60;
+            /* Verde para salvar */
+        }
+
+        #save-edit-button:hover {
+            background-color: #219150;
+            /* Verde escuro ao passar o mouse */
+        }
+
+        .cancel-button {
+            background-color: #e74c3c;
+            /* Vermelho para cancelar */
+        }
+
+        .cancel-button:hover {
+            background-color: #c0392b;
+            /* Vermelho escuro ao passar o mouse */
+        }
+
+        /* Estilo do botão de fechar no popup */
+        .popup-content .popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            /* Ajustado para melhor visibilidade */
+            cursor: pointer;
+        }
+
+        .popup-content .popup-close:hover {
+            color: #e74c3c;
+            /* Vermelho ao passar o mouse */
+        }
+
+        .chart-legend {
+            font-family: 'Roboto', sans-serif;
+        }
+
+
+        /* Estilo para os itens de lançamento */
+        .launch-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .launch-item>div {
+            display: flex;
+            gap: 8px;
+            /* Diminuído para menos espaço entre botões */
+        }
+
+        /* Estilo dos botões de edição e exclusão nos lançamentos */
+        .edit-button,
+        .delete-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            /* Diminuído para bordas mais finas */
+            padding: 6px 12px;
+            /* Ajustado para mais padding */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 12px;
+            /* Ajustado para melhor legibilidade */
+        }
+
+        .edit-button:hover,
+        .delete-button:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMinder</title>
+    <style>
+        /* Adicione aqui seu CSS */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TaskMinder</h1>
+            <span>Gerencie suas finanças com eficiência</span>
+        </div>
+        <div class="panels-container">
+            <!-- Adicionar Receitas e Despesas -->
+            <div class="panel">
+                <h3>Adicionar Lançamento</h3>
+                <form id="finance-form">
+                    <label for="description">Descrição:</label> 
+                    <input type="text" id="description">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="day">Dia:</label>
+                            <input type="number" id="day" min="1" max="31" >
+                        </div>
+                        <div class="form-group">
+                            <label for="month">Mês:</label>
+                            <select id="month"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="year">Ano:</label>
+                            <input type="number" id="year" min="1900" max="2099">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="type">Tipo:</label>
+                            <select id="type">
+                                <option value="income">Receita</option>
+                                <option value="expense">Despesa</option>
+                                <option value="investment">Investimento</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Valor:</label>
+                            <input type="number" id="amount">
+                        </div>
+                    </div>
+                    <div id="investment-fields" style="display: none;">
+                        <label for="return">Retorno %:</label>
+                        <input type="number" id="return" step="0.01">
+                        <label for="end-date">Até Quando:</label>
+                        <input type="date" id="end-date">
+                    </div>
+                    <div id="expense-fields" style="display: none;">
+                        <label for="installments-count">Número de Parcelas:</label>
+                        <input type="number" id="installments-count" min="1">
+                    </div>
+                    <div class="button-group">
+                        <button type="button" id="add-entry-button">Adicionar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <!-- Resumo Financeiro -->
+                <h3>Resumo Financeiro</h3>
+                <div class="summary">
+                    <div style="background-color: #4caf50; /* Verde vibrante */ color: #050505;">
+                        <h4><i class="fas fa-wallet"></i> Receita</h4>
+                        <p id="total-income">R$ 0,00</p>
+                    </div>
+                    <div style="background-color: #e53935; /* Vermelho intenso */ color: #050505;">
+                        <h4><i class="fas fa-credit-card"></i> Despesa</h4>
+                        <p id="total-expense">R$ 0,00</p>
+                    </div>
+                    <div style="background-color: #ff9800; /* Laranja quente */ color: #0f0f0f;">
+                        <h4><i class="fas fa-piggy-bank"></i> Investimento</h4>
+                        <p id="total-investment">R$ 0,00</p>
+                    </div>
+                    <div style="background-color: #2196f3; /* Azul claro */ color: #0a0a0a;">
+                        <h4><i class="fas fa-balance-scale"></i> Saldo Final</h4>
+                        <p id="final-balance">R$ 0,00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painéis Lançamentos e Desempenho Mensal -->
+        <div class="panels-container-2">
+            <!-- Lançamentos -->
+            <div class="panel-launches">
+                <h3>Lançamentos</h3>
+                <div id="launches-list" class="launches-list"></div>
+            </div>
+
+            <!-- Desempenho Mensal -->
+            <div class="panel-performance panel">
+                <h3>Desempenho Mensal</h3>
+                <div class="chart-container">
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popup para Edição de Lançamentos -->
+        <div class="popup" id="edit-popup">
+            <div class="popup-content">
+                <span class="popup-close" id="edit-popup-close">&times;</span>
+                <h3>Editar Lançamento</h3>
+                <form id="edit-form">
+                    <label for="edit-description">Descrição:</label>
+                    <input type="text" id="edit-description">
+
+                    <label for="edit-day">Dia:</label>
+                    <input type="number" id="edit-day" min="1" max="31">
+
+                    <label for="edit-month">Mês:</label>
+                    <select id="edit-month"></select>
+
+                    <label for="edit-year">Ano:</label>
+                    <input type="number" id="edit-year" min="1900" max="2099">
+
+                    <label for="edit-type">Tipo:</label>
+                    <select id="edit-type">
+                        <option value="income">Receita</option>
+                        <option value="expense">Despesa</option>
+                        <option value="investment">Investimento</option>
+                    </select>
+
+                    <label for="edit-amount">Valor:</label>
+                    <input type="number" id="edit-amount">
+
+                    <div id="edit-investment-fields" style="display: none;">
+                        <label for="edit-return">Retorno %:</label>
+                        <input type="number" id="edit-return" step="0.01">
+
+                        <label for="edit-end-date">Até Quando:</label>
+                        <input type="date" id="edit-end-date">
+                    </div>
+
+                    <div id="edit-expense-fields" style="display: none;">
+                        <label for="edit-installments">Parcelado:</label>
+                        <input type="checkbox" id="edit-installments">
+
+                        <div id="edit-repeat-fields" style="display: none;">
+                            <label for="edit-installments-count">Número de Parcelas:</label>
+                            <input type="number" id="edit-installments-count" min="1">
+                        </div>
+                    </div>
+
+                    <button type="button" id="save-edit-button">Salvar</button>
+                    <button type="button" id="cancel-edit-button" class="cancel-button">Cancelar</button>
+                </form>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                let userId = null;
+                let entries = [];
+                let editIndex = null;
+    
+                async function fetchUserProfile() {
+                    try {
+                        const token = localStorage.getItem('jwtToken');
+                        console.log('Token JWT encontrado:', token); // Log do token
+    
+                        if (!token) {
+                            throw new Error('Token JWT não encontrado');
+                        }
+    
+                        const response = await fetch('http://localhost:3000/api/profile', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+    
+                        console.log('Status da resposta do perfil:', response.status); // Log do status da resposta
+    
+                        if (!response.ok) {
+                            const responseData = await response.json();
+                            throw new Error(`Erro ao buscar o perfil do usuário: ${responseData.message || 'Erro desconhecido'}`);
+                        }
+    
+                        const userProfile = await response.json();
+                        userId = userProfile.id; // Ajuste aqui se a chave não for "id"
+                        console.log('User ID:', userId);
+                        await loadUserEntries(); // Chama a função para carregar os lançamentos
+                    } catch (error) {
+                        console.error('Erro ao buscar o perfil do usuário:', error);
+                    }
+                }
+    
+                async function loadUserEntries() {
+                    try {
+                        const token = localStorage.getItem('jwtToken');
+                        if (!token || !userId) {
+                            throw new Error('Token JWT ou userId ausente');
+                        }
+    
+                        // Ajuste a URL do endpoint para buscar as finanças do usuário
+                        const response = await fetch(`http://localhost:3000/api/finances/user/${userId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+    
+                        if (!response.ok) {
+                            const responseData = await response.json();
+                            throw new Error(`Erro ao carregar os lançamentos: ${responseData.message || 'Erro desconhecido'}`);
+                        }
+    
+                        const financeData = await response.json();
+                        entries = financeData.transactions || []; // Certifique-se de que o formato do JSON corresponde ao que você espera
+                        renderLaunches();
+                        updateSummary();
+                        updateChart();
+                    } catch (error) {
+                        console.error('Erro ao carregar os lançamentos:', error);
+                    }
+                }
+    
+                async function saveEntries() {
+                    const token = localStorage.getItem('jwtToken');
+                    if (!token || !userId) {
+                        throw new Error('Token JWT ou userId ausente');
+                    }
+    
+                    const transactionsToSave = entries.map(entry => ({
+                        type: entry.type,
+                        amount: entry.amount,
+                        description: entry.description,
+                        date: new Date(`${entry.year}-${entry.month}-${entry.day}`).toISOString().split('T')[0], // Formato YYYY-MM-DD
+                        installmentsCount: entry.installmentsCount || 1
+                    }));
+    
+                    const response = await fetch('http://localhost:3000/api/finances', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ transactions: transactionsToSave }) // Envia os dados no formato correto
+                    });
+    
+                    if (!response.ok) {
+                        const responseData = await response.json();
+                        console.error('Erro na resposta do servidor:', responseData);
+                        throw new Error(`Erro ao salvar os lançamentos: ${responseData.error || 'Erro desconhecido'}`);
+                    }
+    
+                    console.log('Lançamentos salvos com sucesso:', await response.json());
+                }
+    
+                function handleTypeChange() {
+                    const type = document.getElementById('type').value;
+                    document.getElementById('investment-fields').style.display = type === 'investment' ? 'block' : 'none';
+                    document.getElementById('expense-fields').style.display = type === 'expense' ? 'block' : 'none';
+                }
+    
+                function handleInstallmentsChange() {
+                    const installmentsCount = document.getElementById('installments-count').value;
+                    document.getElementById('installment-fields').style.display = installmentsCount > 1 ? 'block' : 'none';
+                }
+    
+                document.getElementById('type').addEventListener('change', handleTypeChange);
+                document.getElementById('installments-count').addEventListener('input', handleInstallmentsChange);
+    
+                handleTypeChange();
+    
+                const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                const monthSelects = document.querySelectorAll('#month, #edit-month');
+                monthSelects.forEach(select => {
+                    months.forEach(month => {
+                        const option = document.createElement('option');
+                        option.value = month.toLowerCase();
+                        option.textContent = month;
+                        select.appendChild(option);
+                    });
+                });
+    
+                const currentDate = new Date();
+                const currentDay = currentDate.getDate();
+                const currentMonth = months[currentDate.getMonth()].toLowerCase();
+    
+                document.getElementById('day').value = currentDay;
+                document.getElementById('month').value = currentMonth;
+    
+                const addEntryButton = document.getElementById('add-entry-button');
+                const editPopup = document.getElementById('edit-popup');
+                const editPopupClose = document.getElementById('edit-popup-close');
+                const saveEditButton = document.getElementById('save-edit-button');
+                const cancelEditButton = document.getElementById('cancel-edit-button');
+                const launchesList = document.getElementById('launches-list');
+    
+                editPopup.style.display = 'none';
+    
+                function formatDate(day, month) {
+                    const monthIndex = months.indexOf(month.charAt(0).toUpperCase() + month.slice(1));
+                    const date = new Date();
+                    date.setDate(day);
+                    date.setMonth(monthIndex);
+                    return date.toLocaleDateString('pt-BR');
+                }
+    
+                function renderLaunches() {
+                    launchesList.innerHTML = '';
+                    entries.forEach((entry, index) => {
+                        const li = document.createElement('li');
+                        li.classList.add('launch-item');
+    
+                        if (entry.type === 'expense') {
+                            li.classList.add('expense');
+                        } else if (entry.type === 'income') {
+                            li.classList.add('income');
+                        } else if (entry.type === 'investment') {
+                            li.classList.add('investment');
+                        }
+    
+                        li.innerHTML = `
+                            <strong>${entry.description}</strong> - ${formatDate(entry.day, entry.month)} - R$ ${entry.amount.toFixed(2)}
+                            <button onclick="editEntry(${index})">Editar</button>
+                            <button onclick="deleteEntry(${index})">Excluir</button>
+                        `;
+                        launchesList.appendChild(li);
+                    });
+                }
+    
+                function updateSummary() {
+                    const totalIncome = entries
+                        .filter(entry => entry.type === 'income')
+                        .reduce((sum, entry) => sum + entry.amount, 0);
+                    const totalExpense = entries
+                        .filter(entry => entry.type === 'expense')
+                        .reduce((sum, entry) => sum + entry.amount, 0);
+                    const totalInvestment = entries
+                        .filter(entry => entry.type === 'investment')
+                        .reduce((sum, entry) => sum + entry.amount, 0);
+                    const totalBalance = totalIncome - totalExpense + totalInvestment;
+    
+                    document.getElementById('total-income').textContent = `R$ ${totalIncome.toFixed(2)}`;
+                    document.getElementById('total-expense').textContent = `R$ ${totalExpense.toFixed(2)}`;
+                    document.getElementById('total-investment').textContent = `R$ ${totalInvestment.toFixed(2)}`;
+                    document.getElementById('total-balance').textContent = `R$ ${totalBalance.toFixed(2)}`;
+                }
+    
+                async function editEntry(index) {
+                    editIndex = index;
+                    const entry = entries[index];
+                    document.getElementById('edit-description').value = entry.description;
+                    document.getElementById('edit-amount').value = entry.amount;
+                    document.getElementById('edit-day').value = entry.day;
+                    document.getElementById('edit-month').value = entry.month;
+                    document.getElementById('edit-type').value = entry.type;
+    
+                    editPopup.style.display = 'block';
+                }
+    
+                saveEditButton.addEventListener('click', () => {
+                    const description = document.getElementById('edit-description').value;
+                    const amount = parseFloat(document.getElementById('edit-amount').value);
+                    const day = parseInt(document.getElementById('edit-day').value);
+                    const month = document.getElementById('edit-month').value;
+                    const type = document.getElementById('edit-type').value;
+    
+                    entries[editIndex] = { description, amount, day, month, type };
+                    editPopup.style.display = 'none';
+                    renderLaunches();
+                    updateSummary();
+                });
+    
+                cancelEditButton.addEventListener('click', () => {
+                    editPopup.style.display = 'none';
+                });
+    
+                editPopupClose.addEventListener('click', () => {
+                    editPopup.style.display = 'none';
+                });
+    
+                addEntryButton.addEventListener('click', () => {
+                    const description = document.getElementById('description').value;
+                    const amount = parseFloat(document.getElementById('amount').value);
+                    const day = parseInt(document.getElementById('day').value);
+                    const month = document.getElementById('month').value;
+                    const type = document.getElementById('type').value;
+                    const installmentsCount = parseInt(document.getElementById('installments-count').value) || 1;
+    
+                    if (!description || !amount || !day || !month) {
+                        alert('Por favor, preencha todos os campos.');
+                        return;
+                    }
+    
+                    entries.push({ description, amount, day, month, type, installmentsCount });
+                    renderLaunches();
+                    updateSummary();
+                    saveEntries(); // Chama a função para salvar as entradas no backend
+                });
+    
+                fetchUserProfile(); // Chama a função para buscar o perfil do usuário ao carregar a página
+            });
+        </script>
+    </body>
+    
+    </html>

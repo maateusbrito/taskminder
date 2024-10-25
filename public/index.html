@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TaskMinder</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: url('http://i.mlcdn.com.br/portaldalu/fotosconteudo/17021.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #ff5722;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .header span {
+            display: block;
+            font-size: 16px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f5f5f5;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .form-group input:focus {
+            border-color: #ff5722;
+            outline: none;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 40px;
+        }
+
+        .password-container .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .password-container .toggle-password img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+
+        .button:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-button {
+            background-color: #ff5722;
+        }
+
+        .forgot-password-button {
+            background-color: #4caf50;
+        }
+
+        .signup-button {
+            background-color: #2196f3;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: #ff5722;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TaskMinder</h1>
+            <span>Faça login para continuar</span>
+        </div>
+        <div id="root"></div> <!-- Este div será o ponto de entrada para a aplicação React -->
+        <form id="login-form">
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Digite seu e-mail" required>
+            </div>
+            <div class="form-group password-container">
+                <input type="password" id="password" placeholder="Digite sua senha" required>
+                <span class="toggle-password" onclick="togglePassword()">
+                    <img src="https://img.icons8.com/ios-filled/50/000000/visible.png" alt="Mostrar senha" id="toggle-icon">
+                </span>
+            </div>
+            <button type="submit" class="button login-button">Entrar</button>
+            <button type="button" class="button forgot-password-button" onclick="window.location.href='forgot-password.html';">Esqueci minha senha</button>
+            <button type="button" class="button signup-button" onclick="window.location.href='signup.html';">Fazer cadastro</button>
+        </form>
+        <div class="footer">
+            <a href="#">Termos de Serviço</a> | <a href="#">Política de Privacidade</a>
+        </div>
+    </div>
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggle-icon');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.src = 'https://img.icons8.com/ios-filled/50/000000/invisible.png';
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.src = 'https://img.icons8.com/ios-filled/50/000000/visible.png';
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            console.log('Tentando fazer login com:', { email, password });
+
+            try {
+                const response = await fetch('http://localhost:3000/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password }),
+                    credentials: 'include'
+                });
+
+                console.log('Resposta do servidor:', response);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Login bem-sucedido:', data);
+                    // Armazenar o token e informações do usuário
+                    localStorage.setItem('accessToken', data.accessToken); // Certifique-se de que esta chave está sendo usada corretamente
+                    localStorage.setItem('userName', data.userName);
+                    localStorage.setItem('userEmail', data.userEmail);
+                    window.location.href = 'dashboardhome.html';
+                } else {
+                    const errorData = await response.json();
+                    console.error('Erro na resposta do servidor:', errorData);
+                    alert(errorData.message);
+                }
+            } catch (error) {
+                console.error('Erro ao fazer login:', error);
+                alert('Erro ao fazer login. Por favor, tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>

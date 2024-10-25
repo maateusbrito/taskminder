@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMinder - Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/main.min.css">
+    <style>
+        /* CSS como fornecido anteriormente */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: url('http://i.mlcdn.com.br/portaldalu/fotosconteudo/17021.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1600px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            min-height: 80vh;
+            position: relative;
+        }
+
+        .profile-container {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .profile-popup,
+        .profile-edit-popup {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            width: 300px;
+            z-index: 100;
+            transform: translateY(20px);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .profile-popup.show,
+        .profile-edit-popup.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .profile-popup h3,
+        .profile-edit-popup h3 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .profile-popup p,
+        .profile-edit-popup input {
+            margin-bottom: 10px;
+        }
+
+        .profile-popup input,
+        .profile-edit-popup input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .profile-popup button,
+        .profile-edit-popup button {
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #27ae60;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .sidebar {
+            width: 20%;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            z-index: 10;
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #ecf0f1;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #ecf0f1;
+            font-size: 18px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            background-color: #34495e;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 10px;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #1abc9c;
+            color: white;
+        }
+
+        .sidebar ul li#profile-option a {
+            background-color: #2980b9;
+        }
+
+        .sidebar ul li#profile-option a:hover {
+            background-color: #3498db;
+        }
+
+        .sidebar ul li#logout-option a {
+            color: #e74c3c;
+        }
+
+        .sidebar ul li#logout-option a:hover {
+            background-color: #c0392b;
+        }
+
+        .main-content {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 10;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin: 0;
+            color: #ff5722;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .header span {
+            font-size: 20px;
+            color: #666;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+
+        .welcome-message {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #calendar-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        #calendar {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .reminders-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .reminders-container h2 {
+            margin-top: 0;
+        }
+
+        .reminder {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+        .reminder button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+            /* ESTILO CALENDARIO */
+            #calendar-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    position: relative;
+}
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-header button {
+    background-color: #3498db;
+    border: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.calendar-header button:hover {
+    background-color: #2980b9;
+}
+
+#monthYear {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.day {
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+     display: inline-block;
+    align-items: center;
+    justify-content: center;
+}
+
+.day:hover {
+    background-color: #f0f0f0;
+}
+
+.day.green {
+    background-color: green;
+    color: white;
+}
+
+.reminder {
+    font-size: 12px;
+    background-color: #f1c40f;
+    color: #333;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    width: 300px;
+    z-index: 1000;
+}
+
+.modal.open {
+    display: block;
+}
+
+.modal h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+}
+
+.modal input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.modal button {
+    background-color: #27ae60;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.modal button:hover {
+    background-color: #2ecc71;
+}
+
+.modal button.close {
+    background-color: #e74c3c;
+}
+
+.modal button.close:hover {
+    background-color: #c0392b;
+}
+
+        /* ESTILOS LEMBRETES */
+/* Adicione o estilo para os lembretes */
+.reminders-container {
+    margin-top: 30px;
+}
+
+
+
+#addReminderButton {
+    margin-bottom: 10px;
+}
+
+.reminder-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.reminder-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    position: relative;
+}
+
+.reminder-item span {
+    flex: 50; /* Isso dá espaço para o texto do lembrete antes dos ícones */
+}
+
+
+.reminder-icons {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Reduz o espaço entre os ícones */
+    position: absolute;
+    right: 10px; /* Ajusta a posição dos ícones para a direita */
+    top: 10px; /* Ajusta a posição dos ícones no topo do lembrete */
+}
+
+
+
+.edit-icon,
+.delete-icon {
+    cursor: pointer;
+    font-size: 16px; /* Ajuste conforme necessário */
+    color: #333; /* Ajuste conforme necessário */
+}
+
+.edit-icon:hover {
+    color: #3498db; /* Cor ao passar o mouse */
+}
+
+.delete-icon:hover {
+    color: #e74c3c; /* Cor ao passar o mouse */
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+}
+
+.modal.open {
+    display: block;
+}
+
+#addReminderButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #addReminderButton:hover {
+            background-color: #45a049;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Central de Comandos</h3>
+            <ul>
+                <li id="profile-option"><a href="#" class="profile-button" id="profile-button"><i class="fas fa-user"></i> Perfil do Usuário</a></li>
+                <li><a href="dashboardfinanceiro.html"><i class="fas fa-dollar-sign"></i> Financeiro</a></li>
+                <li><a href="dashboardcompras.html"><i class="fas fa-list"></i> Compras</a></li>
+                <li><a href="dashboardescritor.html"><i class="fas fa-pencil-alt"></i> Modo Escritor</a></li>
+                <li><a href="dashboardleitor.html"><i class="fas fa-book"></i> Modo Leitor</a></li>
+                <li><a href="dashboardchat.html" id="modo-estudante"><i class="fas fa-graduation-cap"></i> Estudar</a></li>
+                <li id="logout-option">
+                    <a href="javascript:void(0);" id="logout-button">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </a>
+                </li>
+
+
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Bem-vindo ao TaskMinder</h1>
+                <span>Organize e gerencie suas tarefas</span>
+            </div>
+            <div class="content">
+                <div class="welcome-message">
+                    Olá, <span id="user-name">Usuário</span>! Veja abaixo suas próximas tarefas e compromissos.
+                </div>
+    
+
+    <!-- Profile Popup -->
+    <div class="profile-popup" id="profile-popup">
+        <h3>Perfil do Usuário</h3>
+        <p><strong>Nome:</strong> <span id="profile-name"></span></p>
+        <p><strong>Email:</strong> <span id="profile-email"></span></p>
+        <button id="edit-profile">Editar Perfil</button>
+    </div>
+
+                <!-- Profile Edit Popup -->
+                <div class="profile-edit-popup" id="profile-edit-popup">
+                    <h3>Editar Perfil</h3>
+                    <input type="text" id="edit-name" placeholder="Nome">
+                    <input type="email" id="edit-email" placeholder="Email">
+                    <button id="save-profile">Salvar</button>
+                    <button id="close-profile-popup">Fechar</button>
+                </div>
+
+         <!-- Calendário -->
+         <div id="calendar-container">
+            <div class="calendar-header">
+                <button id="prevMonth">Anterior</button>
+                <h2 id="monthYear"></h2>
+                <button id="nextMonth">Próximo</button>
+            </div>
+            <h2>Calendário de Compromissos</h2>
+            <div id="calendar"></div>
+        </div>
+
+<!-- Lembretes -->
+<div class="reminders-container">
+    <h2>Lembretes</h2>
+    <button id="addReminderButton">Adicionar Lembrete</button>
+    <div id="reminders" class="reminder-list">
+        <!-- Os lembretes serão inseridos dinamicamente aqui -->
+    </div>
+</div>
+
+<!-- Modal para adicionar/editar lembretes -->
+<div class="modal" id="reminderModal">
+    <h3 id="modalTitle"></h3>
+    <input type="date" id="reminderDate" />
+    <input type="text" id="reminderText" placeholder="Adicionar lembrete" />
+    <input type="text" id="reminderTime" placeholder="Horário (ex: 13:00 - 15:00)" />
+    <button id="saveReminder">Salvar</button>
+    <button id="closeModal" class="close">Fechar</button>
+</div>
+
+
+<script src="calendar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/main.min.js"></script>
+<script src="utils.js"></script>
+<script src="js/dashboardhome.js"></script>
+<script>
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let selectedDate = null;
+    const calendarElement = document.getElementById('calendar');
+    const monthYearElement = document.getElementById('monthYear');
+    const reminderModal = document.getElementById('reminderModal');
+    const reminderDate = document.getElementById('reminderDate');
+    const reminderText = document.getElementById('reminderText');
+    const reminderTime = document.getElementById('reminderTime');
+    let userId = localStorage.getItem('userId'); // Obtendo o userId
+
+    function renderCalendar(month, year) {
+        calendarElement.innerHTML = '';
+        monthYearElement.textContent = `${new Date(year, month).toLocaleString('default', { month: 'long' }).toUpperCase()} ${year}`;
+
+        const firstDay = new Date(year, month).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDiv = document.createElement('div');
+            calendarElement.appendChild(emptyDiv);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.classList.add('day');
+            dayElement.textContent = day;
+
+            if (new Date().toDateString() === new Date(year, month, day).toDateString()) {
+                dayElement.style.backgroundColor = 'green';
+                dayElement.style.color = 'white';
+            }
+
+            dayElement.addEventListener('click', () => openModal(`${year}-${month + 1}-${day}`));
+
+            calendarElement.appendChild(dayElement);
+        }
+    }
+
+    function openModal(dateKey) {
+        selectedDate = dateKey;
+        reminderDate.value = dateKey;
+        reminderText.value = '';
+        reminderTime.value = '';
+        document.getElementById('modalTitle').textContent = `Adicionar Lembrete para ${dateKey}`;
+        reminderModal.classList.add('open');
+    }
+
+    document.getElementById('saveReminder').addEventListener('click', async () => {
+        const reminderDateValue = reminderDate.value;
+        const reminderTimeValue = reminderTime.value;
+        const reminderTextValue = reminderText.value;
+
+        if (!reminderDateValue || !reminderTextValue) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
+
+        const reminderData = {
+            descricao: reminderTextValue,
+            horario: reminderTimeValue,
+            dia: reminderDateValue,
+            userId: userId // Inclua o userId aqui, se necessário
+        };
+
+        try {
+            const url = selectedDate
+                ? `http://localhost:3000/api/lembretes/${selectedDate}`
+                : 'http://localhost:3000/api/lembretes';
+
+            const method = selectedDate ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                },
+                body: JSON.stringify(reminderData)
+            });
+
+            if (response.ok) {
+                alert('Lembrete salvo com sucesso!');
+                reminderModal.classList.remove('open');
+                renderCalendar(currentMonth, currentYear);
+                updateRemindersList();
+            } else {
+                const errorResponse = await response.json();
+                alert(`Erro ao salvar o lembrete: ${errorResponse.error || 'Erro desconhecido'}`);
+                console.error('Erro ao salvar o lembrete:', errorResponse);
+            }
+        } catch (error) {
+            console.error('Erro na requisição ao servidor:', error);
+            alert('Erro na requisição ao servidor.');
+        }
+    });
+
+    document.getElementById('closeModal').addEventListener('click', () => {
+        reminderModal.classList.remove('open');
+    });
+
+    function editReminder(reminderId) {
+        fetch(`http://localhost:3000/api/lembretes/${reminderId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        .then(response => response.json())
+        .then(reminder => {
+            if (reminder) {
+                reminderDate.value = reminder.dia;
+                reminderText.value = reminder.descricao;
+                reminderTime.value = reminder.horario;
+                openModal(reminderId);
+            }
+        })
+        .catch(error => console.error('Erro ao carregar o lembrete:', error));
+    }
+
+    function deleteReminder(reminderId) {
+        fetch(`http://localhost:3000/api/lembretes/${reminderId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                renderCalendar(currentMonth, currentYear);
+                updateRemindersList();
+            } else {
+                console.error('Erro ao excluir o lembrete.');
+            }
+        })
+        .catch(error => console.error('Erro na requisição ao servidor:', error));
+    }
+
+    function updateRemindersList() {
+        const remindersContainer = document.getElementById('reminders');
+        remindersContainer.innerHTML = '';
+
+        fetch(`http://localhost:3000/api/lembretes?userId=${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        .then(response => response.json())
+        .then(reminders => {
+            // Verifica se a resposta é uma lista de lembretes
+            if (Array.isArray(reminders)) {
+                for (const reminder of reminders) {
+                    const reminderDiv = document.createElement('div');
+                    reminderDiv.classList.add('reminder-item');
+                    reminderDiv.textContent = `${new Date(reminder.dia).toLocaleDateString()} - ${reminder.descricao} ${reminder.horario}`;
+
+                    const editIcon = document.createElement('span');
+                    editIcon.textContent = '✏️';
+                    editIcon.classList.add('edit-icon');
+                    editIcon.addEventListener('click', () => editReminder(reminder.lembreteId));
+
+                    const deleteIcon = document.createElement('span');
+                    deleteIcon.textContent = '🗑️';
+                    deleteIcon.classList.add('delete-icon');
+                    deleteIcon.addEventListener('click', () => deleteReminder(reminder.lembreteId));
+
+                    reminderDiv.appendChild(editIcon);
+                    reminderDiv.appendChild(deleteIcon);
+
+                    remindersContainer.appendChild(reminderDiv);
+                }
+            } else {
+                console.error('Resposta inesperada do servidor:', reminders);
+            }
+        })
+        .catch(error => console.error('Erro na requisição ao servidor:', error));
+    }
+
+    document.getElementById('addReminderButton').addEventListener('click', () => {
+        openModal();
+    });
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+        if (currentMonth === 0) {
+            currentMonth = 11;
+            currentYear -= 1;
+        } else {
+            currentMonth -= 1;
+        }
+        renderCalendar(currentMonth, currentYear);
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+        if (currentMonth === 11) {
+            currentMonth = 0;
+            currentYear += 1;
+        } else {
+            currentMonth += 1;
+        }
+        renderCalendar(currentMonth, currentYear);
+    });
+
+    renderCalendar(currentMonth, currentYear);
+    updateRemindersList();
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('accessToken');
+        userId = localStorage.getItem('userId'); // Atualiza o userId se necessário
+
+        if (!token) {
+            console.error('Token não encontrado');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/users/profile', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                document.getElementById('user-name').textContent = userData.nome || 'Usuário'; // Default para 'Usuário'
+                document.getElementById('user-email').textContent = userData.email || 'Email não disponível';
+                document.getElementById('profile-name').textContent = userData.nome || 'Nome não disponível';
+                document.getElementById('profile-email').textContent = userData.email || 'Email não disponível';
+            } else {
+                console.error('Erro ao buscar os dados do usuário:', await response.text());
+            }
+        } catch (error) {
+            console.error('Erro na requisição ao servidor:', error);
+        }
+    });
+
+    document.getElementById('logout-button').addEventListener('click', () => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userId');
+        window.location.href = '/index.html'; // Redireciona para a página de login
+    });
+
+    // Popup de perfil
+    document.getElementById('profile-button').addEventListener('click', () => {
+        document.getElementById('profile-edit-popup').classList.toggle('show');
+    });
+
+    document.getElementById('save-profile').addEventListener('click', async () => {
+        const name = document.getElementById('edit-name').value;
+        const email = document.getElementById('edit-email').value;
+
+        if (!name || !email) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/users/' + userId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                },
+                body: JSON.stringify({ nome: name, email }), // Ajustado para 'nome'
+            });
+
+            if (response.ok) {
+                alert('Perfil atualizado com sucesso!');
+                localStorage.setItem('userName', name);
+                localStorage.setItem('userEmail', email);
+                document.getElementById('user-name').textContent = name;
+                document.getElementById('user-email').textContent = email;
+            } else {
+                alert('Erro ao atualizar o perfil.');
+            }
+        } catch (error) {
+            console.error('Erro na requisição ao servidor:', error);
+        }
+    });
+</script>
+
+
+</body>
+</html> 

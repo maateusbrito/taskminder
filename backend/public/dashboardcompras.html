@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Compras</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #333;
+        }
+
+        .header span {
+            color: #777;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .list-container {
+            margin-bottom: 20px;
+        }
+
+        #item-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            display: block;
+            font-weight: bold;
+        }
+
+        .item-quantity {
+            color: #555;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .item-actions button {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .item-actions .edit-button {
+            background-color: #28a745;
+        }
+
+        .item-actions .delete-button {
+            background-color: #dc3545;
+        }
+
+        .item-actions .mark-button {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .item-bought {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .add-button, .voice-button {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .voice-button {
+            background-color: #17a2b8;
+            margin-left: 10px;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .popup-close:hover {
+            color: #dc3545;
+        }
+
+        #item-form label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        #item-form input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #item-form button {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .cancel-button {
+            background-color: #6c757d;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dashboard de Compras</h1>
+            <span>Gerencie suas listas de compras com facilidade</span>
+        </div>
+        <div class="content">
+            <div class="list-container">
+                <ul id="item-list">
+                    <!-- Lista de itens será gerada aqui -->
+                </ul>
+            </div>
+            <div class="footer">
+                <div class="total">Total: R$ <span id="total-amount">0,00</span></div>
+                <button class="add-button" onclick="openPopup()">Adicionar Item</button>
+                <button class="voice-button" onclick="startVoiceRecognition()">Usar Voz</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <span class="popup-close" onclick="closePopup()">&times;</span>
+            <h3 id="popup-title">Adicionar Item</h3>
+            <form id="item-form">
+                <label for="item-name">Nome do Item:</label>
+                <input type="text" id="item-name" required>
+
+                <label for="item-quantity">Quantidade:</label>
+                <input type="number" id="item-quantity" min="1" required>
+
+                <label for="item-price">Preço:</label>
+                <input type="number" id="item-price" step="0.01" min="0" required>
+
+                <input type="hidden" id="item-index">
+                <button type="submit" id="save-edit-button">Salvar</button>
+                <button type="button" class="cancel-button" onclick="closePopup()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="js/dashboardcompras.js"></script>
+    <script>
+        let items = [];
+        let editIndex = -1;
+    
+        // Função para carregar a lista de itens do servidor
+        async function loadItems() {
+            try {
+                const response = await fetch('/api/items', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                if (response.ok) {
+                    items = await response.json();
+                    updateList();
+                } else {
+                    console.error('Erro ao carregar itens:', await response.text());
+                }
+            } catch (error) {
+                console.error('Erro ao carregar itens:', error);
+            }
+        }
+    
+        // Função para salvar a lista de itens no servidor
+        async function saveItems() {
+            try {
+                const response = await fetch('/api/items', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(items)
+                });
+                if (!response.ok) {
+                    console.error('Erro ao salvar itens:', await response.text());
+                }
+            } catch (error) {
+                console.error('Erro ao salvar itens:', error);
+            }
+        }
+    
+        function openPopup(index = -1) {
+            editIndex = index;
+            document.getElementById('popup').style.display = 'flex';
+            document.getElementById('item-form').reset();
+            document.getElementById('popup-title').innerText = index === -1 ? 'Adicionar Item' : 'Editar Item';
+    
+            if (index >= 0) {
+                const item = items[index];
+                document.getElementById('item-name').value = item.name;
+                document.getElementById('item-quantity').value = item.quantity;
+                document.getElementById('item-price').value = item.price;
+                document.getElementById('item-index').value = index;
+            } else {
+                document.getElementById('item-index').value = '';
+            }
+        }
+    
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    
+        function updateList() {
+            const list = document.getElementById('item-list');
+            list.innerHTML = '';
+            let totalAmount = 0;
+    
+            items.forEach((item, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-item';
+                if (item.bought) {
+                    listItem.classList.add('item-bought');
+                }
+    
+                listItem.innerHTML = `
+                    <div class="item-info">
+                        <span class="item-name">${item.name}</span>
+                        <span class="item-quantity">${item.quantity} x R$ ${item.price.toFixed(2)}</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="mark-button" onclick="markAsBought(${index})">Marcar como Comprado</button>
+                        <button class="edit-button" onclick="openPopup(${index})">Editar</button>
+                        <button class="delete-button" onclick="deleteItem(${index})">Excluir</button>
+                    </div>
+                `;
+    
+                list.appendChild(listItem);
+                totalAmount += item.quantity * item.price;
+            });
+    
+            document.getElementById('total-amount').innerText = totalAmount.toFixed(2);
+            saveItems();
+        }
+    
+        document.getElementById('item-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const name = document.getElementById('item-name').value;
+            const quantity = parseFloat(document.getElementById('item-quantity').value);
+            const price = parseFloat(document.getElementById('item-price').value);
+            const index = parseInt(document.getElementById('item-index').value);
+    
+            if (index >= 0) {
+                items[index] = { name, quantity, price, bought: items[index].bought };
+            } else {
+                items.push({ name, quantity, price });
+            }
+    
+            closePopup();
+            await saveItems();
+            updateList();
+        });
+    
+        async function markAsBought(index) {
+            if (index >= 0) {
+                items[index].bought = !items[index].bought;
+                await saveItems();
+                updateList();
+            }
+        }
+    
+        async function deleteItem(index) {
+            if (index >= 0) {
+                items.splice(index, 1);
+                await saveItems();
+                updateList();
+            }
+        }
+    
+        function startVoiceRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'pt-BR';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+    
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                console.log('Transcript:', transcript); // Verifique o transcript capturado
+    
+                // Regex simplificada
+                const regex = /(\d+)\s*(?:unidade|unidades|u|quantidade)?\s*(.+?)\s+a\s*(?:r\$\s*)?([\d,]+(?:\.\d+)?)/i;
+                const match = transcript.match(regex);
+    
+                console.log('Regex Match:', match); // Verifique o match da regex
+    
+                if (match) {
+                    const quantity = parseFloat(match[1].replace(',', '.'));
+                    const name = match[2].trim();
+                    const price = parseFloat(match[3].replace(',', '.'));
+    
+                    // Capitalize the first letter of the name
+                    const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+    
+                    console.log('Dados extraídos:', { name: formattedName, quantity, price });
+    
+                    if (!isNaN(quantity) && !isNaN(price) && formattedName) {
+                        items.push({ name: formattedName, quantity, price });
+                        updateList();
+                    } else {
+                        alert('Dados extraídos incorretos.');
+                    }
+                } else {
+                    alert('Formato de comando de voz incorreto.');
+                }
+            };
+    
+            recognition.onerror = function(event) {
+                console.error('Error occurred in recognition:', event.error);
+            };
+    
+            recognition.onend = function() {
+                console.log('Voice recognition ended.');
+            };
+    
+            recognition.start();
+        }
+    
+        // Carrega os itens ao iniciar a página
+        loadItems();
+
+        const token = localStorage.getItem('token');
+console.log('Token no dashboardchat:', token);
+
+    </script>
+    
+</body>
+</html>

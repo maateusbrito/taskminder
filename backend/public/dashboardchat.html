@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMinder</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: url('http://i.mlcdn.com.br/portaldalu/fotosconteudo/17021.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 50%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
+            min-height: 700px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            z-index: 10;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin: 0;
+            color: #ff5722;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .header span {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+
+        /* Estilo da criação de atividades */
+        .activity-creation {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .activity-creation button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #ff5722;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+
+        .activity-creation button:hover {
+            background-color: #e64a19;
+        }
+
+        .activity-list {
+            overflow-y: auto;
+            max-height: 500px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f5f5f5;
+            flex-grow: 1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Sombra leve no contêiner */
+        }
+
+        /* Contêiner de atividade */
+        .activity {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            /* Borda ao redor de cada atividade */
+            padding: 20px;
+            /* Espaçamento interno */
+            border-radius: 12px;
+            background-color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            font-size: 14px;
+            margin-bottom: 15px;
+            /* Espaçamento entre atividades */
+            position: relative;
+            box-sizing: border-box;
+            /* Garante que o padding não afete a largura total do elemento */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            /* Sombra visível para diferenciar as atividades */
+        }
+
+        /* Efeito de sombra adicional ao passar o mouse */
+        .activity:hover {
+            background-color: #e0e0e0;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            /* Sombra mais pronunciada ao passar o mouse */
+        }
+
+        /* Informação da atividade */
+        .activity-info {
+            flex: 1;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        /* Espaçamento e estilo dos parágrafos dentro da atividade */
+        .activity-info p {
+            margin: 5px 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Ações da atividade */
+        .activity-actions {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: flex-end;
+            /* Alinha os botões à direita */
+        }
+
+
+
+        /* Botão de confirmar */
+        .activity-actions button.confirm-button,
+        .activity-actions button.complete {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .activity-actions button.confirm-button:hover,
+        .activity-actions button.complete:hover {
+            background-color: #388e3c;
+            transform: scale(1.1);
+        }
+
+        /* Ícone de check verde para atividades concluídas */
+        .activity-completed::before {
+            content: '✔️';
+            color: #4caf50;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        /* Botão de editar */
+        .activity-actions button.edit-button {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #2196f3;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .activity-actions button.edit-button:hover {
+            background-color: #1976d2;
+            transform: scale(1.1);
+        }
+
+        .activity-actions button.edit::before {
+            content: '✏️';
+        }
+
+        /* Botão de excluir */
+        .activity-actions button.delete-button {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #f44336;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .activity-actions button.delete-button:hover {
+            background-color: #c62828;
+            transform: scale(1.1);
+        }
+
+        .activity-actions button.delete::before {
+            content: '🗑️';
+        }
+
+        /* Ícone de check verde para atividades concluídas */
+        .activity-completed::before {
+            content: '✔️';
+            color: #4caf50;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .modal-header,
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .modal-footer {
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .modal-footer button {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .modal-footer button#saveActivityButton {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .modal-footer button#saveActivityButton:hover {
+            background-color: #388e3c;
+            transform: scale(1.1);
+        }
+
+        .modal-footer button#cancelActivityButton {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .modal-footer button#cancelActivityButton:hover {
+            background-color: #c62828;
+            transform: scale(1.1);
+        }
+
+        .modal-body input,
+        .modal-body textarea {
+            width: calc(100% - 22px);
+            margin: 10px 0;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        /* Container do chat */
+        .chat-container {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            width: 400px;
+            height: 600px;
+            max-height: 1300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            cursor: move;
+            z-index: 1300;
+        }
+
+        /* Cabeçalho do chat */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            background-color: #f5f5f5;
+            height: calc(100% - 80px);
+            /* Ajuste a altura para caber o cabeçalho e a área de entrada */
+        }
+
+        /* Título do chat */
+        .chat-title {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .chat-title i {
+            font-size: 24px;
+            margin-right: 8px;
+            color: #4CAF50;
+        }
+
+
+        .chat-title-text {
+            font-size: 20px;
+        }
+
+
+        .chat-input {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            display: flex;
+        }
+
+
+        .chat-input textarea {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff5722;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .chat-input button:hover {
+            background-color: #e64a19;
+            transform: scale(1.1);
+        }
+
+        .chat-messages .message {
+            margin-bottom: 10px;
+            margin-top: 0;
+            /* Reduzido para não ter margem superior */
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+            word-break: break-word;
+            /* Quebra de palavras longas */
+        }
+
+        .user-message {
+            color: #333;
+            background-color: #e0f7fa;
+            /* Cor de fundo das mensagens do usuário */
+        }
+
+
+        .bot-message {
+            color: #007bff;
+            background-color: #f1f8e9;
+            /* Cor de fundo das mensagens do bot */
+        }
+
+        .message-text ul,
+        .message-text ol {
+            padding-left: 20px;
+            /* Adiciona indentação para listas */
+            margin-top: 0;
+            margin-bottom: 10px;
+            /* Espaçamento entre listas */
+        }
+
+        .message-text li {
+            margin-bottom: 5px;
+            /* Espaçamento entre itens da lista */
+        }
+
+
+        .note-container {
+            width: 300px;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            position: fixed;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .note-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .note-content {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            overflow-y: auto;
+            min-height: 300px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .note-controls {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .note-color-buttons {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .note-color-buttons button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .note-color-buttons button:hover {
+            transform: scale(1.1);
+        }
+
+        .note-clear {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .note-clear button {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .note-clear button:hover {
+            background-color: #e64a19;
+        }
+
+
+
+        /* Animação do contador */
+        @keyframes countdown {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Contador de atividades */
+        /* Estilos do timer */
+        .countdown-container {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+            z-index: 1200;
+        }
+
+        /* Exemplo de animação com cor de fundo piscando */
+        @keyframes countdownWarning {
+            0% {
+                color: white;
+                background-color: red;
+                transform: scale(1);
+            }
+
+            50% {
+                color: red;
+                background-color: white;
+                transform: scale(1.1);
+            }
+
+            100% {
+                color: white;
+                background-color: red;
+                transform: scale(1);
+            }
+        }
+
+        .activity-timer.warning {
+            animation: countdownWarning 0.5s linear infinite;
+        }
+
+
+
+
+        /* Rodapé de progresso */
+        .progress-footer {
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ddd;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0;
+            /* Começa vazio e será ajustado via JavaScript */
+            height: 20px;
+            background-color: #4caf50;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            border-radius: 25px;
+            transition: width 0.3s;
+        }
+
+        /* Estilo do modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Escurece mais o fundo */
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            /* Reduz a margem para que o modal esteja mais visível */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* Botão de fechar */
+        .close-button {
+            color: #333;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+        }
+
+        .close-button:hover {
+            background-color: #ddd;
+        }
+
+        /* Formulário de edição */
+        .activity-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-form label {
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+
+        .activity-form input,
+        .activity-form textarea {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .activity-form button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .activity-form button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                /* Ajuste a largura do contêiner em telas menores */
+            }
+
+            .chat-container,
+            .notepad-container {
+                width: 95%;
+                height: 50vh;
+                /* Ajuste a altura conforme necessário */
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+            }
+
+            .activity {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .chat-input textarea,
+            .chat-input button,
+            .activity-actions button {
+                font-size: 12px;
+                /* Ajusta o tamanho da fonte para telas menores */
+                padding: 8px 10px;
+                /* Ajusta o padding */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TaskMinder</h1>
+            <span>Gerencie suas atividades diárias</span>
+        </div>
+        <div class="activity-creation">
+            <button id="newActivityButton">Nova Atividade</button>
+        </div>
+        <div class="activity-list" id="activityList">
+            <!-- Atividades adicionadas aparecerão aqui -->
+        </div>
+
+        <!-- Barra de progresso no rodapé -->
+        <div class="progress-footer">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <span>0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-title">
+                <i class="fas fa-robot"></i> <!-- Ícone do robô -->
+                <span class="chat-title-text">Tobozinho</span>
+            </div>
+            <button id="clearChatButton">Limpar</button> <!-- Adiciona o botão "Limpar" -->
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Mensagens do chat aparecerão aqui -->
+        </div>
+        <div class="chat-input">
+            <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
+            <button id="sendChatButton">Enviar</button>
+        </div>
+    </div>
+
+    <div class="note-container">
+        <div class="note-header">
+            <h3>Bloco de Notas</h3>
+        </div>
+        <div class="note-content" id="noteContent" contenteditable="true">
+            <!-- Conteúdo do bloco de notas -->
+        </div>
+        <div class="note-controls">
+            <div class="note-color-buttons">
+                <button style="background-color: rgb(30, 255, 0);" data-color="yellow"></button>
+                <button style="background-color: rgb(255, 39, 39);" data-color="red"></button>
+                <button style="background-color: rgb(0, 153, 255);" data-color="blue"></button>
+                <button style="background-color: rgb(255, 238, 0);" data-color="green"></button>
+                <button style="background-color: rgb(255, 136, 0);" data-color="green"></button>
+            </div>
+            <div class="note-clear">
+                <button id="clearNoteButton">Limpar Bloco</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Criação de Modal -->
+    <div id="newActivityModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Atividade</h2>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="activityTitle" placeholder="Título da Atividade" required>
+                <textarea id="activityDescription" placeholder="Descrição da Atividade"></textarea>
+                <input type="number" id="activityTime" placeholder="Tempo em minutos" required min="1">
+            </div>
+            <div class="modal-footer">
+                <button id="saveActivityButton">Salvar</button>
+                <button id="cancelActivityButton">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editActivityModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEditModal">&times;</span>
+            <h2>Editar Atividade</h2>
+            <div class="activity-form">
+                <label for="editActivityTitle">Título:</label>
+                <input type="text" id="editActivityTitle" placeholder="Título da atividade">
+                <label for="editActivityDescription">Descrição:</label>
+                <textarea id="editActivityDescription" placeholder="Descrição da atividade"></textarea>
+                <label for="editActivityTime">Tempo (minutos):</label>
+                <input type="number" id="editActivityTime" placeholder="Tempo em minutos">
+                <button id="saveEditButton">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="js/dashboardchat.js"></script>
+    <script>
+        const newActivityButton = document.getElementById('newActivityButton');
+        const newActivityModal = document.getElementById('newActivityModal');
+        const saveActivityButton = document.getElementById('saveActivityButton');
+        const cancelActivityButton = document.getElementById('cancelActivityButton');
+        const activityList = document.getElementById('activityList');
+        const sendChatButton = document.getElementById('sendChatButton');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const clearNoteButton = document.getElementById('clearNoteButton');
+        const colorSelectButtons = document.querySelectorAll('.note-color-buttons button');
+        const noteContent = document.getElementById('noteContent');
+        const usernameElement = document.getElementById('username');
+        let activities = [];
+        let noteText = '';
+        let username = 'Usuário'; // Inicialmente placeholder
+        let userId = ''; // ID do usuário
+    
+        // Função para obter o token
+        function getToken() {
+            return localStorage.getItem('accessToken');
+        }
+
+    // Função para obter o ID do usuário
+    async function getUserId() {
+        const token = getToken();
+        try {
+            const response = await fetch('http://localhost:3000/api/users/profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const userData = await response.json();
+                return userData._id;
+            } else {
+                console.error('Erro ao carregar dados do usuário');
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do usuário:', error);
+        }
+    }
+
+    // Função para carregar dados do usuário
+    async function loadUserData() {
+        userId = await getUserId(); // Obtém o ID do usuário
+        const token = getToken();
+        try {
+            const response = await fetch('http://localhost:3000/api/users/profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const userData = await response.json();
+                username = userData.name;
+                usernameElement.textContent = username;
+            } else {
+                console.error('Erro ao carregar dados do usuário');
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do usuário:', error);
+        }
+    }
+
+    // Função para carregar o bloco de notas
+    function loadNote() {
+        const savedContent = localStorage.getItem(`noteContent_${userId}`);
+        if (savedContent) {
+            noteContent.innerHTML = savedContent;
+        }
+    }
+
+   // Função para carregar atividades
+    async function loadActivities() {
+        try {
+            const response = await fetch(`http://localhost:3000/api/tasks?userId=${userId}`, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            if (response.ok) {
+                activities = await response.json();
+                renderActivities();
+            } else {
+                console.error('Erro ao carregar atividades');
+            }
+        } catch (error) {
+            console.error('Erro ao carregar atividades:', error);
+        }
+    }
+
+
+// Carregar dados do usuário ao iniciar a página
+window.addEventListener('load', () => {
+    loadUserData(); // Carrega os dados do usuário
+    loadActivities(); // Carrega as atividades
+    loadNote(); // Carrega o bloco de notas
+});
+
+    // Função para abrir o modal de nova atividade
+    newActivityButton.addEventListener('click', () => {
+        newActivityModal.style.display = 'block';
+    });
+
+    
+
+// Função para salvar a nova atividade
+saveActivityButton.addEventListener('click', async () => {
+    const title = document.getElementById('activityTitle').value;
+    const description = document.getElementById('activityDescription').value;
+    const time = document.getElementById('activityTime').value;
+    const token = localStorage.getItem('accessToken');
+
+    if (title && time > 0) {
+        const userId = await getUserId();
+        const newActivity = {
+            title,
+            description,
+            time,
+            completed: false,
+            userId // Corrigido para 'userId'
+        };
+
+        try {
+            const response = await fetch('http://localhost:3000/api/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(newActivity)
+            });
+
+            if (response.ok) {
+                const createdActivity = await response.json();
+                activities.push(createdActivity);
+                localStorage.setItem('activities', JSON.stringify(activities));
+                renderActivities();
+                newActivityModal.style.display = 'none';
+                clearActivityModal();
+                const newActivityIndex = activities.length - 1;
+                startTimer(newActivityIndex);
+            } else {
+                const error = await response.json();
+                console.error('Erro ao criar atividade:', error.message);
+                alert(`Erro ao criar atividade: ${error.message}`);
+            }
+        } catch (error) {
+            console.error('Erro ao salvar a atividade:', error);
+        }
+    } else {
+        alert('Por favor, preencha todos os campos corretamente.');
+    }
+});
+
+  // Funções do Modal (edição atividade)
+  document.addEventListener('DOMContentLoaded', () => {
+        const editActivityModal = document.getElementById('editActivityModal');
+        const closeEditModalButton = document.getElementById('closeEditModal');
+        const saveEditButton = document.getElementById('saveEditButton');
+
+        function openEditModal(index) {
+            const activity = activities[index];
+            document.getElementById('editActivityTitle').value = activity.title || '';
+            document.getElementById('editActivityDescription').value = activity.description || '';
+            document.getElementById('editActivityTime').value = activity.time || '';
+
+            saveEditButton.onclick = async function () {
+                activity.title = document.getElementById('editActivityTitle').value;
+                activity.description = document.getElementById('editActivityDescription').value;
+                activity.time = parseInt(document.getElementById('editActivityTime').value, 10);
+
+                try {
+                    const response = await fetch(`http://localhost:3000/api/tasks/${activity.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(activity)
+                    });
+
+                    if (response.ok) {
+                        localStorage.setItem('activities', JSON.stringify(activities));
+                        renderActivities();
+                        closeEditModal();
+                    } else {
+                        const error = await response.json();
+                        console.error(`Erro ao editar atividade: ${error.message}`);
+                        alert(`Erro ao editar atividade: ${error.message}`);
+                    }
+                } catch (error) {
+                    console.error('Erro ao editar a atividade:', error);
+                }
+            };
+
+            editActivityModal.style.display = 'block';
+        }
+
+        function closeEditModal() {
+            editActivityModal.style.display = 'none';
+        }
+
+        closeEditModalButton.addEventListener('click', closeEditModal);
+
+        window.openEditModal = openEditModal; // Torna a função acessível globalmente
+    });
+
+
+function startTimer(index) {
+    const timerElement = document.getElementById(`activity-timer-${index}`);
+    if (timerElement) {
+        let timeRemaining = activities[index].time * 60;
+
+        function updateTimerClass() {
+            if (timeRemaining <= 20) { // Se o tempo restante for 20 segundos ou menos
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+        }
+
+        updateTimerClass(); // Inicializa a classe de animação
+
+
+        const intervalId = setInterval(() => {
+                if (timeRemaining <= 0) {
+                    clearInterval(intervalId);
+                    timerElement.textContent = 'Tempo esgotado';
+                    timerElement.classList.remove('warning'); // Remove a classe quando o tempo acabar
+                    completeActivity(index); // Marca a atividade como concluída
+                    return;
+                }
+                timeRemaining--;
+                timerElement.textContent = formatTime(timeRemaining);
+                updateTimerClass(); // Atualiza a classe de animação conforme o tempo restante
+            }, 1000);
+        }
+    }
+
+   // Fecha o formulário de nova atividade
+   document.querySelector('.activity-form').style.display = 'none';
+
+// Atualizar a lista de atividades e a barra de progresso
+renderActivities();
+updateProgressBar();
+
+// Função para cancelar a criação da atividade
+cancelActivityButton.addEventListener('click', () => {
+    newActivityModal.style.display = 'none';
+    clearActivityModal();
+});
+
+function updateProgressBar() {
+        const totalActivities = activities.length;
+        const completedActivities = activities.filter(activity => activity.completed).length;
+        const percentage = totalActivities > 0 ? (completedActivities / totalActivities) * 100 : 0;
+        const progressBar = document.querySelector('.progress-bar');
+        progressBar.style.width = `${percentage}%`;
+        progressBar.querySelector('span').textContent = `${Math.round(percentage)}%`;
+
+        // Atualiza o localStorage com o valor da barra de progresso
+        localStorage.setItem('progressPercentage', percentage);
+    }
+
+        // Chame esta função sempre que o progresso mudar
+        updateProgressBar();
+
+    // Chame esta função sempre que o progresso mudar
+    updateProgressBar();
+
+  // Função para renderizar atividades
+  function renderActivities() {
+        activityList.innerHTML = ''; // Limpa a lista de atividades
+
+        activities.forEach((activity, index) => {
+            const activityElement = document.createElement('div');
+            activityElement.className = 'activity-container';
+            const isCompleted = activity.completed ? 'activity-completed' : '';
+
+            activityElement.innerHTML = `
+                <div class="activity-header ${isCompleted}">
+                    <h2 class="activity-title">${activity.title}</h2>
+                </div>
+                <div class="activity-details">
+                    <p class="activity-description">${activity.description}</p>
+                    <div class="activity-time">
+                        <span>Tempo:</span>
+                        <span id="activity-timer-${index}" class="activity-timer">${formatTime(activity.time * 60)}</span>
+                    </div>
+                </div>
+                <div class="activity-actions">
+                    <button class="confirm-button" onclick="completeActivity(${index})">Confirmar</button>
+                    <button class="edit-button" onclick="openEditModal(${index})">Editar</button>
+                    <button class="delete-button" onclick="deleteActivity(${index})">Excluir</button>
+                </div>
+            `;
+
+            activityList.appendChild(activityElement);
+        });
+
+        updateProgressBar(); // Atualiza a barra de progresso
+    }
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+
+        function completeActivity(index) {
+            activities[index].completed = true;
+            clearInterval(activityTimers[index]); // Para o cronômetro
+            document.getElementById(`activity-timer-${index}`).textContent = 'Tempo esgotado';
+            renderActivities();
+            updateProgressBar();
+            localStorage.setItem('activities', JSON.stringify(activities)); // Atualiza o localStorage
+        }
+
+        async function deleteActivity(index) {
+    const activityId = activities[index]._id; // Supondo que o ID da atividade está em `_id`
+    const token = getToken();
+
+    try {
+        const response = await fetch(`http://localhost:3000/api/tasks/${activityId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            activities.splice(index, 1);
+            localStorage.setItem('activities', JSON.stringify(activities)); // Atualiza o localStorage
+            renderActivities();
+        } else {
+            const error = await response.json();
+            console.error(`Erro ao excluir atividade: ${error.message}`);
+            alert(`Erro ao excluir atividade: ${error.message}`);
+        }
+    } catch (error) {
+        console.error('Erro ao excluir a atividade:', error);
+    }
+}
+
+
+        // Função para limpar os campos do modal
+        function clearActivityModal() {
+            document.getElementById('activityTitle').value = '';
+            document.getElementById('activityDescription').value = '';
+            document.getElementById('activityTime').value = '';
+        }
+
+        // Função para permitir arrastar o chat
+        function makeDraggable(element) {
+            let isDragging = false;
+            let startX, startY, startLeft, startTop;
+
+            element.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = element.getBoundingClientRect();
+                startLeft = rect.left;
+                startTop = rect.top;
+                document.body.style.cursor = 'move';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const offsetX = e.clientX - startX;
+                    const offsetY = e.clientY - startY;
+                    element.style.left = `${startLeft + offsetX}px`;
+                    element.style.top = `${startTop + offsetY}px`;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    document.body.style.cursor = 'auto';
+                }
+            });
+        }
+
+        // Inicializar a função de arrastar
+        const chatContainer = document.querySelector('.chat-container');
+
+        makeDraggable(chatContainer);
+
+
+        sendChatButton.addEventListener('click', async () => {
+            const message = chatInput.value;
+
+            if (message.trim()) {
+                const userMessageElement = document.createElement('div');
+                userMessageElement.className = 'message user-message';
+                userMessageElement.innerHTML = `<strong>${username}:</strong> ${message}`;
+                chatMessages.appendChild(userMessageElement);
+
+                chatInput.value = '';
+
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message })
+                    });
+
+                    const data = await response.json();
+                    if (data.reply) {
+                        const botMessageElement = document.createElement('div');
+                        botMessageElement.className = 'message bot-message';
+                        botMessageElement.innerHTML = `<strong>🤖 Tobozinho:</strong> ${data.reply}`;
+                        chatMessages.appendChild(botMessageElement);
+                    }
+                } catch (error) {
+                    console.error('Erro ao enviar a mensagem:', error);
+                }
+
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                saveChat(); // Salva o chat no localStorage
+            }
+        });
+
+
+// Função para limpar o chat
+document.getElementById('clearChatButton').addEventListener('click', function () {
+    chatMessages.innerHTML = ''; // Limpa o conteúdo do chat
+    localStorage.removeItem(`chatMessages_${userId}`); // Remove o chat do localStorage
+});
+
+    // Função para salvar o conteúdo do bloco de notas
+    function saveNote() {
+        localStorage.setItem(`noteContent_${userId}`, noteContent.innerHTML);
+    }
+
+// Função para carregar o chat
+function loadChat() {
+    const savedMessages = localStorage.getItem(`chatMessages_${userId}`);
+    if (savedMessages) {
+        chatMessages.innerHTML = savedMessages;
+    }
+}
+
+// Função para salvar o chat
+function saveChat() {
+    const chatMessagesHTML = chatMessages.innerHTML;
+    localStorage.setItem(`chatMessages_${userId}`, chatMessagesHTML);
+}
+
+        // Chama a função de carregar o chat ao carregar a página
+        window.onload = function () {
+            loadChat(); // Carrega o chat
+            loadActivities(); // Carrega as atividades
+            loadNotes(); // Carrega o bloco de notas
+        };
+
+    // Função para salvar atividades
+    function saveActivities() {
+        localStorage.setItem(`activities_${userId}`, JSON.stringify(activities));
+    }
+
+// Carregar dados do usuário ao iniciar a página
+window.addEventListener('load', () => {
+    loadUserData(); // Carrega os dados do usuário
+    loadActivities(); // Carrega as atividades
+    loadNote(); // Carrega o bloco de notas
+    loadChat(); // Carrega o chat
+});
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const noteContent = document.querySelector('.note-content');
+            const colorButtons = document.querySelectorAll('.note-color-buttons button');
+            const clearButton = document.querySelector('.note-clear button');
+
+            // Função para aplicar a cor ao texto selecionado
+            const applyColor = (color) => {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const span = document.createElement('span');
+                    span.style.backgroundColor = color;
+                    range.surroundContents(span);
+                    selection.removeAllRanges();
+                    saveNote();
+                }
+            };
+
+            // Inicializar a página
+            document.addEventListener('DOMContentLoaded', () => {
+                loadUserData();
+                loadActivities();
+                loadNoteContent();
+            });
+
+            
+
+            // Adiciona event listeners aos botões de cor
+            colorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const color = window.getComputedStyle(button).backgroundColor;
+                    applyColor(color);
+                });
+            });
+
+            // Função para limpar o conteúdo da nota
+            clearButton.addEventListener('click', () => {
+                noteContent.innerHTML = '';
+                saveNote();
+            });
+
+            // Função para salvar o conteúdo da nota no localStorage
+            const saveNote = () => {
+                localStorage.setItem('noteContent', noteContent.innerHTML);
+            };
+
+            // Função para carregar o conteúdo salvo no localStorage
+            const loadNote = () => {
+                const savedContent = localStorage.getItem('noteContent');
+                if (savedContent) {
+                    noteContent.innerHTML = savedContent;
+                }
+            };
+
+            // Carrega o conteúdo da nota ao carregar a página
+            loadNote();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedActivities = localStorage.getItem('activities');
+            if (savedActivities) {
+                activities = JSON.parse(savedActivities);
+                renderActivities(); // Atualiza a lista de atividades com os dados carregados
+            }
+
+            // Atualiza a barra de progresso com base no valor salvo
+            const percentage = localStorage.getItem('progressPercentage') || 0;
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.width = `${percentage}%`;
+            progressBar.querySelector('span').textContent = `${Math.round(percentage)}%`;
+        });
+
+        
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const editActivityModal = document.getElementById('editActivityModal');
+            const closeEditModalButton = document.getElementById('closeEditModal');
+            const saveEditButton = document.getElementById('saveEditButton');
+
+            function openEditModal(index) {
+    const activity = activities[index];
+    document.getElementById('editActivityTitle').value = activity.title || '';
+    document.getElementById('editActivityDescription').value = activity.description || '';
+    document.getElementById('editActivityTime').value = activity.time || '';
+
+    // Adicione a função de salvar
+    const token = getToken();
+    saveEditButton.onclick = async function () {
+        activity.title = document.getElementById('editActivityTitle').value;
+        activity.description = document.getElementById('editActivityDescription').value;
+        activity.time = parseInt(document.getElementById('editActivityTime').value, 10);
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/tasks/${activity._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(activity)
+            });
+
+            if (response.ok) {
+                activities[index] = await response.json();
+                localStorage.setItem('activities', JSON.stringify(activities));
+                renderActivities();
+                closeEditModal();
+            } else {
+                const error = await response.json();
+                console.error(`Erro ao editar atividade: ${error.message}`);
+                alert(`Erro ao editar atividade: ${error.message}`);
+            }
+        } catch (error) {
+            console.error('Erro ao editar a atividade:', error);
+        }
+    };
+
+    editActivityModal.style.display = 'block';
+}
+
+function closeEditModal() {
+    editActivityModal.style.display = 'none';
+}
+
+
+            closeEditModalButton.addEventListener('click', closeEditModal);
+
+            window.openEditModal = openEditModal; // Torna a função acessível globalmente
+        });
+
+            // Carregar as atividades e dados do usuário
+    activities = JSON.parse(localStorage.getItem('activities')) || [];
+    renderActivities();
+    loadUserData();
+
+        const token = localStorage.getItem('accessToken');
+console.log('Token no dashboardchat:', token);
+
+    </script>
+</body>
+
+</html>
